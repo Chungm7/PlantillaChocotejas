@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Gestión de Productos</title>
+    <style>
+        body { font-size: .875rem; }
+        .sidebar { position: fixed; top: 0; bottom: 0; left: 0; z-index: 100; padding: 48px 0 0; box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1); }
+        .sidebar-sticky { position: relative; top: 0; height: calc(100vh - 48px); padding-top: .5rem; overflow-x: hidden; overflow-y: auto; }
+        .nav-link { font-weight: 500; color: #333; }
+        .nav-link.active { color: #007bff; }
+    </style>
+</head>
+<body>
+
+<header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">Gestión "El Sabor de Mamá"</a>
+    <div class="navbar-nav">
+        <div class="nav-item text-nowrap">
+            <a class="nav-link px-3" href="login.html">Cerrar Sesión</a>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="perfiles.html">Gestión de Perfiles</a></li>
+                    <li class="nav-item"><a class="nav-link" href="usuarios.html">Gestión de Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link active" aria-current="page" href="productos.html">Gestión de Productos</a></li>
+                    <li class="nav-item"><a class="nav-link" href="ventas.html">Gestión de Ventas</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Gestión de Productos</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <button type="button" class="btn btn-sm btn-outline-secondary">Añadir Nuevo Producto</button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Stock</th>
+                            <th>Categoría</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-product-list">
+                        <!-- Products will be loaded here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Product Modal (for Add/Edit) -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="productModalLabel">Añadir/Editar Producto</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="product-form">
+          <input type="hidden" id="productId">
+          <div class="mb-3">
+            <label for="productName" class="form-label">Nombre</label>
+            <input type="text" class="form-control" id="productName" required>
+          </div>
+          <div class="mb-3">
+            <label for="productDescription" class="form-label">Descripción</label>
+            <textarea class="form-control" id="productDescription" rows="3"></textarea>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="productPrice" class="form-label">Precio</label>
+              <input type="number" class="form-control" id="productPrice" step="0.01" required>
+            </div>
+            <div class="col">
+              <label for="productStock" class="form-label">Stock</label>
+              <input type="number" class="form-control" id="productStock" required>
+            </div>
+          </div>
+           <div class="mb-3">
+            <label for="productCategory" class="form-label">Categoría</label>
+            <input type="text" class="form-control" id="productCategory" required>
+          </div>
+          <div class="mb-3">
+            <label for="productImage" class="form-label">URL de Imagen</label>
+            <input type="text" class="form-control" id="productImage">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="saveProductButton">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/database.js"></script>
+<script>
+    const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+    const productForm = document.getElementById('product-form');
+
+    function renderProductTable() {
+        const productList = document.getElementById('admin-product-list');
+        productList.innerHTML = ''; // Clear table
+        products.forEach(p => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${p.id}</td>
+                <td>${p.name}</td>
+                <td>S/ ${p.price.toFixed(2)}</td>
+                <td>${p.stock}</td>
+                <td>${p.category}</td>
+                <td>
+                    <button class="btn btn-sm btn-primary edit-btn" data-id="${p.id}">Editar</button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${p.id}">Eliminar</button>
+                </td>
+            `;
+            productList.appendChild(row);
+        });
+    }
+
+    function openProductModal(productId) {
+        productForm.reset();
+        if (productId) {
+            // Editing existing product
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('productId').value = product.id;
+                document.getElementById('productName').value = product.name;
+                document.getElementById('productDescription').value = product.description;
+                document.getElementById('productPrice').value = product.price;
+                document.getElementById('productStock').value = product.stock;
+                document.getElementById('productCategory').value = product.category;
+                document.getElementById('productImage').value = product.image;
+                document.getElementById('productModalLabel').textContent = 'Editar Producto';
+            }
+        } else {
+            // Adding new product
+            document.getElementById('productId').value = '';
+            document.getElementById('productModalLabel').textContent = 'Añadir Nuevo Producto';
+        }
+        productModal.show();
+    }
+
+    function saveProduct() {
+        // This is a simulation. In a real app, data would be sent to a server.
+        const id = document.getElementById('productId').value;
+        const name = document.getElementById('productName').value;
+        if (id) {
+            console.log(`Simulating update for product ID: ${id} with name: ${name}`);
+            alert('Producto actualizado (simulación)');
+        } else {
+            console.log(`Simulating creation of new product with name: ${name}`);
+            alert('Producto añadido (simulación)');
+        }
+        productModal.hide();
+        // Here you would re-render the table with the new data
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        renderProductTable();
+
+        // Event listeners for table buttons
+        document.getElementById('admin-product-list').addEventListener('click', function(e) {
+            if (e.target.classList.contains('edit-btn')) {
+                openProductModal(parseInt(e.target.dataset.id));
+            }
+            if (e.target.classList.contains('delete-btn')) {
+                if(confirm('¿Estás seguro de que quieres eliminar este producto?')) {
+                    console.log('Simulating delete for product ID:', e.target.dataset.id);
+                    alert('Producto eliminado (simulación)');
+                }
+            }
+        });
+
+        // Event listener for "Add New Product" button
+        document.querySelector('.btn-outline-secondary').addEventListener('click', () => openProductModal(null));
+
+        // Event listener for modal's save button
+        document.getElementById('saveProductButton').addEventListener('click', saveProduct);
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
