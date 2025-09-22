@@ -1,0 +1,54 @@
+/* Estilos Globales y Paleta de Colores */
+
+:root {
+    --color-dark-chocolate: #3E2723;
+    --color-milk-chocolate: #5D4037;
+    --color-caramel: #A1887F;
+    --color-cream: #FFF8E1;
+    --color-accent: #FFC107; /* Un toque dorado */
+    --font-headings: 'Playfair Display', serif;
+    --font-body: 'Roboto', sans-serif;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--color-cream);
+    color: var(--color-dark-chocolate);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-headings);
+    color: var(--color-milk-chocolate);
+}
+
+.btn-primary {
+    background-color: var(--color-milk-chocolate);
+    border-color: var(--color-milk-chocolate);
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-dark-chocolate);
+    border-color: var(--color-dark-chocolate);
+}
+
+.btn-secondary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-dark-chocolate);
+    font-weight: bold;
+}
+
+.btn-secondary:hover {
+    background-color: #e0a800;
+    border-color: #e0a800;
+    color: var(--color-dark-chocolate);
+}
+
+a {
+    color: var(--color-milk-chocolate);
+}
+
+a:hover {
+    color: var(--color-dark-chocolate);
+}

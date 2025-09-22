@@ -1,0 +1,54 @@
+/* Estilos para la galería de productos y fichas */
+
+.product-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Asegura que todas las tarjetas tengan la misma altura */
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+}
+
+.product-card img {
+    width: 100%;
+    height: 200px; /* Altura fija para las imágenes */
+    object-fit: cover; /* Asegura que la imagen cubra el espacio sin deformarse */
+}
+
+.product-card-body {
+    padding: 1rem;
+    flex-grow: 1; /* Permite que el cuerpo crezca y empuje el footer hacia abajo */
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-body h5 {
+    font-family: var(--font-headings);
+    color: var(--color-dark-chocolate);
+}
+
+.product-card-body .price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--color-milk-chocolate);
+    margin-top: auto; /* Empuja el precio y el botón hacia abajo */
+}
+
+.product-card-body .btn {
+    margin-top: 1rem;
+}
+
+/* Estilos para la barra lateral de filtros */
+.sidebar {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
